@@ -1,0 +1,135 @@
+entrypoints Program ;
+
+Prog. 		Program 	::= [Def] ;
+
+comment "#" ;
+comment "//" ;
+comment "/*" "*/" ;
+terminator Def "" ;
+terminator Stm "" ;
+separator nonempty Const "::" ;
+separator nonempty String "" ;
+separator nonempty Type "," ;
+separator nonempty Id "," ;
+separator 		   Arg "," ;
+separator 		   Exp "," ;
+separator 		   Dec "" ;
+
+
+
+
+
+Dec2Def.            Def                 ::=Dec;
+ 
+DFun.		    Def 		::= Type Id "("[Arg]")" Body ;
+DFun2.		    Def 		::= "inline" Type Id "("[Arg]")" Body ; 
+DUse. 		  Def 		        ::= "using" QConst ";" ;
+
+ArgTT1. 		  Arg			::= Top_Type ;
+ArgTT2.	          Arg			::= Top_Type Id ;
+ArgTT3.             Arg			::= Top_Type Id "=" Exp ;
+
+ArgT1. 		  Arg			::= Type ;
+ArgT2.	          Arg			::= Type Id ;
+ArgT3.             Arg			::= Type Id "=" Exp ;
+
+BEmpty. 	Body 		::= ";" ;
+BBody.  	Body 		::= "{" [Stm] "}" ;
+
+DDecl.		Dec 		::= Top_Type [Id] ";" ; 
+DDecInit.	Dec 		::= Top_Type Id "=" Exp ";" ;
+ 
+DTypeDef.	Dec 		::= "typedef" Top_Type Id ";" ;
+
+DDecl_version2.		Dec 		::=Type [Id] ";" ; 
+DDecInit_version2.	Dec 		::=Type Id "=" Exp ";" ;
+ 
+DTypeDef_version2.	Dec 		::= "typedef" Type Id ";" ;
+
+ 
+DCons.		    Top_Type 		::= "const" Type ;
+DRef. 		    Top_Type 		::= Type "&" ;
+DMix. 		    Top_Type 		::= "const" Type "&" ;
+
+Dec2Stm.		Stm 		::= Dec ;
+Exp2Stm. 		Stm 		::= Exp ";" ;
+
+SReturn. 	  Stm 		::= "return" Exp ";" ;
+SWhile. 	  Stm 		::= "while" "(" Exp ")" Stm ;
+SFor.	 	  Stm 	        ::= "for" "("Dec  Exp ";" Exp ")" Stm ;
+SDoWhile.	  Stm 		::= "do" Stm "while" "(" Exp ")" ";" ;
+
+SBlock. 	Stm 		::= "{" [Stm] "}" ;
+SIf.		  Stm 		::= "if" "(" Exp ")" Stm Rif;
+RIfElse.          Rif           ::= "else" Stm;
+RIfEmpty.         Rif           ::=;
+
+S2Def.      Def                  ::=Struct;
+SStruct.    Stm 		 ::= Struct ;
+SStruct2.   Struct 		::= "struct" Id "{" [Dec] "}" ";" ;
+
+
+TBool.		Type 		::= "bool" ;
+TDouble. 	Type 		::= "double" ;
+TInt. 		Type 		::= "int" ;
+TVoid. 		Type 		::= "void" ;
+TQConst.        Type 		::= QConst ;
+
+QCon.  		QConst 		::= [Const] ; 
+Cid.   		Const  		::= Id;  
+CType.          Const           ::= Id "<" [Type] ">" ;
+ 
+
+EChar. 		Exp16 		::= Char ;
+EInt. 		Exp16 		::= Integer ;
+EDouble. 	Exp16 		::= Double ;
+EString. 	Exp16 		::= [String] ;
+
+EConst.		Exp15 		::= QConst ;
+ECall. 		Exp15 		::= Id "(" [Exp] ")" ;
+ECall2.		Exp15 		::= Exp15 "[" Exp "]" ;
+ 
+ECall3.		Exp14		::= Exp14 "." Exp15 ;
+EADot.		Exp14		::= Exp14 "->" Exp15;
+EPIncr. 	Exp14 		::= Exp15 "++" ;
+EPDecr. 	Exp14 		::= Exp15 "--" ;
+EDRef. 		Exp14 		::= "*" Exp15 ;
+
+EIncr. 		Exp13 		::= "++" Exp14 ;
+EDecr. 		Exp13 		::= "--" Exp14 ;
+ENeg. 		Exp13 		::= "-" Exp14 ;
+ENot.		Exp13 		::= "!" Exp14;
+
+EMod.           Exp12 		::= Exp12 "%" Exp13 ;
+EMul. 		Exp12 		::= Exp12 "*" Exp13 ;
+EDiv. 		Exp12 		::= Exp12 "/" Exp13 ;
+
+EAdd. 		Exp11 		::= Exp11 "+" Exp12 ;
+ESub. 		Exp11 		::= Exp11 "-" Exp12 ;
+
+ELShift.	Exp10 		::= Exp10 "<<" Exp11 ;
+ERShift.  	Exp10 		::= Exp10 ">>" Exp11 ;
+
+ELt. 		Exp9  		::= Exp9 "<" Exp10 ;
+EGt. 		Exp9  		::= Exp9 ">" Exp10 ;
+ELEq. 		Exp9  		::= Exp9 "<=" Exp10 ;
+EGEq. 		Exp9  		::= Exp9 ">=" Exp10 ;
+
+EEq. 		Exp8  		::= Exp8 "==" Exp9 ;
+ENEq. 		Exp8  		::= Exp8 "!=" Exp9 ;
+
+EAnd. 		Exp4  		::= Exp4 "&&" Exp5 ;
+EOr. 		Exp3  		::= Exp3 "||" Exp4 ;
+
+EME.		Exp2 	         ::= Exp3 "-=" Exp2 ;
+EPE.		Exp2 	       ::= Exp3 "+=" Exp2 ;
+EAss. 		Exp2  		::= Exp3 "=" Exp2 ;
+ETer.		Exp2 		::= Exp3 "?" Exp3 ":" Exp3 ;
+
+EThrow. 	Exp   		::= "throw" Exp2 ;
+
+coercions Exp 16 ;
+
+token Id (letter (letter | digit | '_')*) ;
+
+
